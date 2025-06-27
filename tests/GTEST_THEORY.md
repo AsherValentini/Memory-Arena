@@ -27,6 +27,7 @@ ctest  # runs the dummy test
 
 A Google Test unit looks like this:
 
+```bash
 \#include <gtest/gtest.h>
 
 TEST(TestSuiteName, TestCaseName) {
@@ -34,6 +35,7 @@ TEST(TestSuiteName, TestCaseName) {
   // Act
   // Assert (EXPECT_ / ASSERT_)
 }
+```
 
     EXPECT_*: soft checks (test continues even if it fails)
 
@@ -49,6 +51,7 @@ We'll write 3 test cases:
 
 # 2. Test File: tests/memory_arena_test.cpp
 
+```cpp
 \#include <gtest/gtest.h>
 \#include "memory_arena.hpp"
 \#include "tick.hpp"
@@ -100,7 +103,7 @@ TEST(MemoryArenaTest, DestructionAddsToFreelist) {
         EXPECT_EQ(d2, d1);  // Should reuse same memory
     });
 }
-
+```
 # 3. Build and Run
 
 From your root directory:
@@ -114,7 +117,7 @@ Or if you want verbose output:
 
 ./bin/memory_arena_tests
 
-🧠 Recap
+Recap
 
     Test 1 checks fresh creation.
 
