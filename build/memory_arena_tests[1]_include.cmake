@@ -1,0 +1,5 @@
+if(EXISTS "/home/asher/cpp-projects/Memory-Arena/build/memory_arena_tests[1]_tests.cmake")
+  include("/home/asher/cpp-projects/Memory-Arena/build/memory_arena_tests[1]_tests.cmake")
+else()
+  add_test(memory_arena_tests_NOT_BUILT memory_arena_tests_NOT_BUILT)
+endif()

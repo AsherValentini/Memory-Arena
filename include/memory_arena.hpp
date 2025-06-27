@@ -3,6 +3,9 @@
 #include <stddef.h>
 #include <vector>
 #include <optional>
+#include <algorithm>
+#include "tick.hpp"
+#include "order.hpp"
 
 class MemoryArena {
 
@@ -39,7 +42,9 @@ public:
   }
 
 private:
-  std::vector<std::byte> pool_;
+  static constexpr std::size_t MaxObjectSize = std::max(sizeof(Order), sizeof(Tick));
+  static constexpr std::size_t MaxObjectAlign = std::max(alignof(Order), alignof(Tick));
+  std::vector<std::aligned_storage_t<MaxObjectSize, MaxObjectAlign>> pool_;
   std::vector<void*> freelist_;
   std::size_t capacity_;
 };
