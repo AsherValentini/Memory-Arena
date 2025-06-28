@@ -1,5 +1,55 @@
 #include <gtest/gtest.h>
 
-TEST(DummyTest, JustRuns) { 
-	EXPECT_EQ(1,1); 
+#include "memory_arena.hpp"
+#include "tick.hpp"
+#include "order.hpp"
+
+// Dummy types with logging so we can see construction/destruction
+struct Dummy {
+  int x;
+  double y;
+  Dummy(int a, double b) : x(a), y(b) {}
+};
+
+TEST(DummyTest, JustRuns) { EXPECT_EQ(1, 1); }
+
+// Test 1: fresh allocation (no reuse no destruction)
+TEST(MemoryArenaTest, FeshAllocationWorks) {
+  MemoryArena arena(2);
+
+  Dummy* d1 = arena.create<Dummy>(42, 3.14);
+  ASSERT_NE(d1, nullptr);
+  EXPECT_EQ(d1->x, 42);
+  EXPECT_DOUBLE_EQ(d1->y, 3.14);
 }
+
+// Test 2: reuse from freelist
+TEST(MemoryArenaTest, ReuseFreelistOnDestroy) {
+  MemoryArena arena(2);
+
+  Dummy* d1 = arena.create<Dummy>(1, 1.1);
+  Dummy* d2 = arena.create<Dummy>(2, 2.2);
+
+  arena.destroy(d1); // d1 now in freelist
+
+  Dummy* d3 = arena.create<Dummy>(3, 3.3); // should reuse d1's slot
+  ASSERT_EQ(d3, d1);                       // pointer must be the same
+
+  EXPECT_EQ(d3->x, 3);
+  EXPECT_DOUBLE_EQ(d3->y, 3.3);
+}
+
+// Test 3: destruction tracking (pointer ends up in freelist)
+TEST(MemoryArenaTest, DestructionAddsToFreelist) {
+  MemoryArena arena(2);
+
+  Dummy* d1 = arena.create<Dummy>(10, 10.1);
+  arena.destroy(d1);
+
+  // Expect no exception when reusing
+  EXPECT_NO_THROW({
+    Dummy* d2 = arena.create<Dummy>(20, 20.2);
+    EXPECT_EQ(d2, d1); // Should reuse same memory
+  });
+}
+

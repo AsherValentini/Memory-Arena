@@ -29,6 +29,7 @@ public:
       return reinterpret_cast<T*>(raw);
     } else {
       void* raw = freelist_.back();
+      freelist_.pop_back();
       new (raw) T(arg1, arg2);
       std::cout << "[MemoryArena]: object created at old address: " << raw << "\n";
       return reinterpret_cast<T*>(raw);

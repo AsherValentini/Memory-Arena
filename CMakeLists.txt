@@ -12,7 +12,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 include_directories(include)
 
 # Main executable
-add_executable(memory_arena_demo src/main.cpp)
+add_executable(prog
+	src/main.cpp
+)
 
 # Google Test setup
 enable_testing()
@@ -26,7 +28,10 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # Add test executable
-add_executable(memory_arena_tests tests/memory_arena_test.cpp)
+add_executable(memory_arena_tests
+	tests/memory_arena_test.cpp
+)
+
 target_link_libraries(memory_arena_tests gtest_main)
 
 # Register the tests
